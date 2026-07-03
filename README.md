@@ -8,7 +8,7 @@ Needs a Postgres database — a free [Neon](https://neon.tech) project or `verce
 
 ```bash
 npm install
-cp .env.example .env     # fill in DATABASE_URL
+cp .env.example .env     # fill in the two Postgres URLs (same string is fine locally)
 npx prisma db push       # creates tables
 npx prisma db seed       # 10 smart categories + sample bookmarks
 npm run dev              # http://localhost:3000
@@ -17,7 +17,7 @@ npm run dev              # http://localhost:3000
 ## Deploying to Vercel
 
 1. Push this repo to GitHub, then **Import Project** on [vercel.com](https://vercel.com) (root directory: repo root — the `extension/` folder is a separate package and is ignored by the Next.js build).
-2. In the project's **Storage** tab, create a **Postgres** database (Neon-backed). This automatically sets `DATABASE_URL` for the project.
+2. In the project's **Storage** tab, create a **Postgres** database (Neon-backed). This automatically injects the connection variables (`POSTGRES_PRISMA_URL` pooled + `POSTGRES_URL_NON_POOLING` direct) for the project.
 3. Deploy. The build runs `prisma db push` before `next build`, so tables are created/synced automatically — no manual migration step needed.
 4. Optional: run `npx prisma db seed` locally against the same `DATABASE_URL` if you want the production database to start with sample data instead of empty.
 
