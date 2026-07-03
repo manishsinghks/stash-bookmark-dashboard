@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Bookmark {
+  id            String      @id @default(cuid())
+  url           String
+  name          String
+  description   String?
+  notes         String?
+  faviconUrl    String?
+  ogImageUrl    String?
+  themeColor    String?
+  domain        String
+  isFavorite    Boolean     @default(false)
+  visitCount    Int         @default(0)
+  lastVisitedAt DateTime?
+  deletedAt     DateTime?
+  categoryId    String?
+  category      Category?   @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  collectionId  String?
+  collection    Collection? @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  tags          Tag[]
+  activities    Activity[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([deletedAt, createdAt])
+  @@index([categoryId])
+  @@index([collectionId])
+  @@index([isFavorite])
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  slug      String     @unique
+  icon      String
+  color     String
+  isCustom  Boolean    @default(false)
+  bookmarks Bookmark[]
+  createdAt DateTime   @default(now())
+}
+
+model Collection {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  description String?
+  icon        String     @default("folder")
+  color       String     @default("#6E56CF")
+  sortOrder   Int        @default(0)
+  bookmarks   Bookmark[]
+  createdAt   DateTime   @default(now())
+}
+
+model Tag {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  bookmarks Bookmark[]
+  createdAt DateTime   @default(now())
+}
+
+model Activity {
+  id         String    @id @default(cuid())
+  type       String
+  bookmarkId String?
+  bookmark   Bookmark? @relation(fields: [bookmarkId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+
+  @@index([createdAt])
+  @@index([type])
+}
