@@ -7,7 +7,7 @@ datasource db {
   // Vercel Postgres/Neon: pooled URL for the running app (serverless-safe),
   // direct URL for schema pushes/migrations (pooled can't run DDL).
   url       = env("POSTGRES_PRISMA_URL")
-  directUrl = env("POSTGRES_URL_NON_POOLING")
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 model Bookmark {
